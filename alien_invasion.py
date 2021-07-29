@@ -76,6 +76,7 @@ class AlienInvasion:
         if not self.aliens:
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
 
     def check_events(self):
         for event in pygame.event.get():
@@ -97,7 +98,7 @@ class AlienInvasion:
         if button_clicked and not self.stats.game_active:
             self.stats.reset_stats()
             self.stats.game_active = True
-        
+            self.settings.initialize_dynamic_settings()
             self.aliens.empty()
             self.bullets.empty()
             self._create_fleet()
