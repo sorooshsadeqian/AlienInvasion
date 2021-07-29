@@ -8,6 +8,7 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from button import Button
+from scoreboard import Scoreboard
 
 class AlienInvasion:
 
@@ -20,6 +21,7 @@ class AlienInvasion:
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self.play_button = Button(self, "Play")
+        self.sb = Scoreboard(self)
 
 
     
@@ -77,6 +79,9 @@ class AlienInvasion:
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+        if collisions:
+            self.stats.score += self.settings.alien_point   
+            self.sb.prep_score()
 
     def check_events(self):
         for event in pygame.event.get():
@@ -103,6 +108,7 @@ class AlienInvasion:
             self.bullets.empty()
             self._create_fleet()
             self.ship.center_ship()
+            self.sb.prep_score()
             pygame.mouse.set_visible(False)
 
     def _update_screen(self):
@@ -111,9 +117,12 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+        self.sb.show_score()
         if not self.stats.game_active:
             self.play_button.draw_button()
+        
         pygame.display.flip()
+
     
     def _check_keydown_events(self, event):
         if event.key == pygame.K_RIGHT:
