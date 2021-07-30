@@ -79,13 +79,18 @@ class AlienInvasion:
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+            self.stats.level += 1
+            self.sb.prep_level()
         if collisions:
-            self.stats.score += self.settings.alien_point   
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)  
             self.sb.prep_score()
+            self.sb.check_high_score()
 
     def check_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self.save_high_score()
                 sys.exit()
 
             elif event.type == pygame.KEYDOWN:
@@ -109,6 +114,8 @@ class AlienInvasion:
             self._create_fleet()
             self.ship.center_ship()
             self.sb.prep_score()
+            self.sb.prep_level()
+            self.sb.prep_ships()
             pygame.mouse.set_visible(False)
 
     def _update_screen(self):
@@ -132,6 +139,7 @@ class AlienInvasion:
         elif event.key == pygame.K_SPACE:
             self.fire_bullet()
         elif event.key == pygame.K_q:
+            self.save_high_score()
             sys.exit()
     
     def _check_keyup_events(self, event):
@@ -159,6 +167,7 @@ class AlienInvasion:
     def _ship_hit(self):
         if self.stats.ships_left > 0:
             self.stats.ships_left -= 1
+            self.sb.prep_ships()
             self.aliens.empty()
             self.bullets.empty()
 
@@ -176,6 +185,11 @@ class AlienInvasion:
             if alien.rect.bottom >= screen_rect.bottom:
                 self._ship_hit()
                 break
+            
+    def save_high_score(self):
+        with open('high_score.txt', 'w') as file:
+            file.write(str(self.stats.high_score))
+
 
 
 if __name__ == "__main__":
