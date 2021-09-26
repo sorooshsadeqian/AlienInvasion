@@ -1,1 +1,1 @@
-Run alien_invasion.py for playing!
+Run alien_invasion.py to play.
